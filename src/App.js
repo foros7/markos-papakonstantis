@@ -1,5 +1,6 @@
 import './App.css';
 import { useState } from 'react';
+import logo from './logo.png'; // Adjust the path and filename as needed
 
 function App() {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
@@ -10,15 +11,18 @@ function App() {
 
   return (
     <div className="App">
-      <nav className="navbar">
-        <div className="nav-brand">ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ</div>
-        <div className="nav-links">
-          <a href="#home">ΑΡΧΙΚΗ</a>
-          <a href="#services">ΥΠΗΡΕΣΙΕΣ</a>
-          <a href="#about">ΣΧΕΤΙΚΑ ΜΕ ΕΜΑΣ</a>
-          <a href="#contact">ΕΠΙΚΟΙΝΩΝΙΑ</a>
-        </div>
-      </nav>
+      <header className="App-header">
+        <img src={logo} alt="Site Logo" className="site-logo" />
+        <nav className="navbar">
+          <div className="nav-brand">ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ</div>
+          <div className="nav-links">
+            <a href="#home">ΑΡΧΙΚΗ</a>
+            <a href="#services">ΥΠΗΡΕΣΙΕΣ</a>
+            <a href="#about">ΣΧΕΤΙΚΑ ΜΕ ΕΜΑΣ</a>
+            <a href="#contact">ΕΠΙΚΟΙΝΩΝΙΑ</a>
+          </div>
+        </nav>
+      </header>
 
       <section id="home" className="hero-section">
         <h1>ΝΟΜΙΚΗ ΑΡΙΣΤΕΙΑ & ΕΠΑΓΓΕΛΜΑΤΙΣΜΟΣ</h1>
