@@ -21,10 +21,10 @@ function App() {
     setSubmitStatus('sending');
 
     emailjs.sendForm(
-      'service_zu43akh', // Θα το πάρετε από το EmailJS
-      'template_4jmyd3s', // Θα το πάρετε από το EmailJS
+      process.env.REACT_APP_EMAILJS_SERVICE_ID,
+      process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
       form.current,
-      'ttPQ4npPSJKo-u2ET' // Θα το πάρετε από το EmailJS
+      process.env.REACT_APP_EMAILJS_USER_ID
     )
       .then((result) => {
         setSubmitStatus('success');
