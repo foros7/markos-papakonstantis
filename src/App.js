@@ -1,12 +1,40 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import logo from './logo.png'; // Adjust the path and filename as needed
+import emailjs from '@emailjs/browser';
+import GavelIcon from '@mui/icons-material/Gavel';
+import BusinessIcon from '@mui/icons-material/Business';
+import GroupIcon from '@mui/icons-material/Group';
+import SecurityIcon from '@mui/icons-material/Security';
 
 function App() {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('');
+  const form = useRef();
 
   const handleAppointmentClick = () => {
     setShowAppointmentModal(true);
+  };
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    setSubmitStatus('sending');
+
+    emailjs.sendForm(
+      'service_zu43akh', // Θα το πάρετε από το EmailJS
+      'template_4jmyd3s', // Θα το πάρετε από το EmailJS
+      form.current,
+      'ttPQ4npPSJKo-u2ET' // Θα το πάρετε από το EmailJS
+    )
+      .then((result) => {
+        setSubmitStatus('success');
+        setTimeout(() => {
+          setShowAppointmentModal(false);
+          setSubmitStatus('');
+        }, 3000);
+      }, (error) => {
+        setSubmitStatus('error');
+      });
   };
 
   return (
@@ -25,29 +53,51 @@ function App() {
       </header>
 
       <section id="home" className="hero-section">
-        <h1>ΝΟΜΙΚΗ ΑΡΙΣΤΕΙΑ & ΕΠΑΓΓΕΛΜΑΤΙΣΜΟΣ</h1>
-        <p>Εξειδικευμένη νομική υποστήριξη με πάνω από 20 χρόνια εμπειρίας στην υπηρεσία σας</p>
-        <button className="cta-button" onClick={handleAppointmentClick}>ΚΛΕΙΣΕ ΡΑΝΤΕΒΟΥ</button>
+        <h1>ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ & ΣΥΝΕΡΓΑΤΕΣ</h1>
+        <p>Προσφέρουμε εξειδικευμένες και ολοκληρωμένες νομικές υπηρεσίες, προσαρμοσμένες στις ιδιαίτερες ανάγκες κάθε πελάτη, διασφαλίζοντας την πλήρη προστασία των δικαιωμάτων και συμφερόντων σας.</p>
+        <div className="hero-buttons">
+          <button className="cta-button" onClick={handleAppointmentClick}>ΚΛΕΙΣΤΕ ΡΑΝΤΕΒΟΥ</button>
+        </div>
       </section>
 
       <section id="services" className="services-section">
         <h2>Οι Υπηρεσίες Μας</h2>
         <div className="services-grid">
           <div className="service-card">
-            <h3>Εμπορικό Δίκαιο</h3>
-            <p>Συμβουλές και εκπροσώπηση σε εμπορικές υποθέσεις</p>
+            <div className="service-icon">
+              <BusinessIcon />
+            </div>
+            <div className="service-content">
+              <h3>Εμπορικό Δίκαιο</h3>
+              <p>Συμβουλές και εκπροσώπηση σε εμπορικές υποθέσεις</p>
+            </div>
           </div>
           <div className="service-card">
-            <h3>Εργατικό Δίκαιο</h3>
-            <p>Προστασία δικαιωμάτων εργαζομένων και εργοδοτών</p>
+            <div className="service-icon">
+              <GroupIcon />
+            </div>
+            <div className="service-content">
+              <h3>Εργατικό Δίκαιο</h3>
+              <p>Προστασία δικαιωμάτων εργαζομένων και εργοδοτών</p>
+            </div>
           </div>
           <div className="service-card">
-            <h3>Αστικό Δίκαιο</h3>
-            <p>Διαχείριση αστικών υποθέσεων και διαφορών</p>
+            <div className="service-icon">
+              <GavelIcon />
+            </div>
+            <div className="service-content">
+              <h3>Αστικό Δίκαιο</h3>
+              <p>Διαχείριση αστικών υποθέσεων και διαφορών</p>
+            </div>
           </div>
           <div className="service-card">
-            <h3>Ποινικό Δίκαιο</h3>
-            <p>Υπεράσπιση και νομική εκπροσώπηση</p>
+            <div className="service-icon">
+              <SecurityIcon />
+            </div>
+            <div className="service-content">
+              <h3>Ποινικό Δίκαιο</h3>
+              <p>Υπεράσπιση και νομική εκπροσώπηση</p>
+            </div>
           </div>
         </div>
       </section>
@@ -64,11 +114,25 @@ function App() {
 
       <section id="contact" className="contact-section">
         <h2>Επικοινωνία</h2>
-        <div className="contact-info">
-          <p>Διεύθυνση: Ελ. Βενιζέλου 56, Αθήνα 10678</p>
-          <p>Κινητό: +30 6932602151</p>
-          <p>Σταθερό: +30 2130229176</p>
-          <p>Email: info@papakonstantis-law.gr</p>
+        <div className="contact-wrapper">
+          <div className="contact-info">
+            <p>Διεύθυνση: Ελ. Βενιζέλου 56, Αθήνα 10678</p>
+            <p>Κινητό: +30 6932602151</p>
+            <p>Σταθερό: +30 2130229176</p>
+            <p>Email: info@papakonstantis-law.gr</p>
+          </div>
+          <div className="map-section">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.8454743250965!2d23.733436776491547!3d37.98426070666042!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1bd3c8d4d4c3d%3A0x6f0c0c0c0c0c0c0!2zzpXOuy4gzpLOtc69zrnOts6tzrvOv8-FIDU2LCDOkc64zq7Ovc6xIDEwNjc4!5e0!3m2!1sel!2sgr!4v1620000000000!5m2!1sel!2sgr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Τοποθεσία Γραφείου"
+            ></iframe>
+          </div>
         </div>
       </section>
 
@@ -77,26 +141,26 @@ function App() {
           <div className="appointment-modal">
             <button className="close-modal" onClick={() => setShowAppointmentModal(false)}>×</button>
             <h2>Κλείστε Ραντεβού</h2>
-            <form className="appointment-form">
+            <form ref={form} onSubmit={sendEmail} className="appointment-form">
               <div className="form-group">
                 <label>Ονοματεπώνυμο</label>
-                <input type="text" required />
+                <input type="text" name="user_name" required />
               </div>
               <div className="form-group">
                 <label>Email</label>
-                <input type="email" required />
+                <input type="email" name="user_email" required />
               </div>
               <div className="form-group">
                 <label>Τηλέφωνο</label>
-                <input type="tel" required />
+                <input type="tel" name="user_phone" required />
               </div>
               <div className="form-group">
                 <label>Ημερομηνία</label>
-                <input type="date" required />
+                <input type="date" name="appointment_date" required />
               </div>
               <div className="form-group">
                 <label>Ώρα</label>
-                <select required>
+                <select name="appointment_time" required>
                   <option value="">Επιλέξτε ώρα</option>
                   <option value="09:00">09:00</option>
                   <option value="10:00">10:00</option>
@@ -111,9 +175,17 @@ function App() {
               </div>
               <div className="form-group">
                 <label>Σχόλια</label>
-                <textarea rows="4"></textarea>
+                <textarea name="message" rows="4"></textarea>
               </div>
-              <button type="submit" className="submit-button">Υποβολή</button>
+              <button type="submit" className="submit-button" disabled={submitStatus === 'sending'}>
+                {submitStatus === 'sending' ? 'Αποστολή...' : 'Υποβολή'}
+              </button>
+              {submitStatus === 'success' && (
+                <div className="success-message">Το ραντεβού σας καταχωρήθηκε επιτυχώς!</div>
+              )}
+              {submitStatus === 'error' && (
+                <div className="error-message">Υπήρξε ένα πρόβλημα. Παρακαλώ δοκιμάστε ξανά.</div>
+              )}
             </form>
           </div>
         </div>
