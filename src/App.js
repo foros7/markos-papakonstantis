@@ -1,6 +1,6 @@
 import './App.css';
 import { useState, useRef } from 'react';
-import logo from './logo.png'; // Adjust the path and filename as needed
+import logo from './logo3.png'; // Adjust the path and filename as needed
 import emailjs from '@emailjs/browser';
 import GavelIcon from '@mui/icons-material/Gavel';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -19,24 +19,34 @@ function App() {
   const sendEmail = (e) => {
     e.preventDefault();
     setSubmitStatus('sending');
-
+  
+    // Send the first email
     emailjs.sendForm(
       process.env.REACT_APP_EMAILJS_SERVICE_ID,
-      process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+      process.env.REACT_APP_EMAILJS_TEMPLATE_ID, // First template ID
       form.current,
       process.env.REACT_APP_EMAILJS_USER_ID
     )
+      .then((result) => {
+        // Send the second email
+        return emailjs.sendForm(
+          process.env.REACT_APP_EMAILJS_SERVICE_ID,
+          process.env.REACT_APP_EMAILJS_TEMPLATE_ID_2, // Second template ID
+          form.current,
+          process.env.REACT_APP_EMAILJS_USER_ID
+        );
+      })
       .then((result) => {
         setSubmitStatus('success');
         setTimeout(() => {
           setShowAppointmentModal(false);
           setSubmitStatus('');
         }, 3000);
-      }, (error) => {
+      })
+      .catch((error) => {
         setSubmitStatus('error');
       });
   };
-
   return (
     <div className="App">
       <header className="App-header">
@@ -53,7 +63,6 @@ function App() {
       </header>
 
       <section id="home" className="hero-section">
-        <h1>ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ & ΣΥΝΕΡΓΑΤΕΣ</h1>
         <p>Προσφέρουμε εξειδικευμένες και ολοκληρωμένες νομικές υπηρεσίες, προσαρμοσμένες στις ιδιαίτερες ανάγκες κάθε πελάτη, διασφαλίζοντας την πλήρη προστασία των δικαιωμάτων και συμφερόντων σας.</p>
         <div className="hero-buttons">
           <button className="cta-button" onClick={handleAppointmentClick}>ΚΛΕΙΣΤΕ ΡΑΝΤΕΒΟΥ</button>
