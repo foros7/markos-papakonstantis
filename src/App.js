@@ -6,6 +6,10 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import BusinessIcon from '@mui/icons-material/Business';
 import GroupIcon from '@mui/icons-material/Group';
 import SecurityIcon from '@mui/icons-material/Security';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import PolicyIcon from '@mui/icons-material/Policy';
+import image from './image.png'; // Add this import
+import { FaHandcuffs } from 'react-icons/fa6';
 
 function ServiceModal({ service, isOpen, onClose }) {
   return (
@@ -108,7 +112,7 @@ function App() {
       </header>
 
       <section id="home" className="hero-section">
-        <p>Προσφέρουμε εξειδικευμένες και ολοκληρωμένες νομικές υπηρεσίες, προσαρμοσμένες στις ιδιαίτερες ανάγκες κάθε πελάτη, διασφαλίζοντας την πλήρη προστασία των δικαιωμάτων και συμφερόντων σας.</p>
+        <p>Προσφέρουμε εξειδικευμένες και ολοκληρωμένες νομικές υπηρεσίες, προσαρμοσμένες στις ιδιαίτερες ανάγκες κάθε πελάτη, διασφαλίζοντας την πλήρη προστασία των δικαιωμάτων και των συμφερόντων σας.</p>
         <div className="hero-buttons">
           <button className="cta-button" onClick={handleAppointmentClick}>ΚΛΕΙΣΤΕ ΡΑΝΤΕΒΟΥ</button>
         </div>
@@ -116,7 +120,12 @@ function App() {
 
       <section id="services" className="services-section">
         <h2>Υπηρεσίες</h2>
-        <div className="services-grid">
+        <div className="services-grid" style={{ 
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '2rem',
+          padding: '2rem'
+        }}>
           {[
             {
               icon: <GavelIcon className="service-icon" />,
@@ -125,11 +134,15 @@ function App() {
                 "Ενοχικό Δίκαιο",
                 "Οικογενειακό Δίκαιο",
                 "Κληρονομικό Δίκαιο",
-                "Εμπράγματο Δίκαιο"
+                "Εμπράγματο Δίκαιο",
+                "Αποζημίωση από αδικοπραξίες",
+                "Εμπράγματο δίκαιο (κινητά και ακίνητα)",
+                "Τροχαία",
+                "Ρυθμίσεις οφειλών"
               ]
             },
             {
-              icon: <SecurityIcon className="service-icon" />,
+              icon: <FaHandcuffs className="service-icon" />,
               title: "Ποινικό Δίκαιο",
               items: [
                 "Εγκλήματα Οικονομικού Ποινικού Δικαίου",
@@ -167,7 +180,21 @@ function App() {
               ]
             },
             {
-              icon: <GroupIcon className="service-icon" />,
+              icon: <BusinessIcon className="service-icon" />,
+              title: "Εταιρικό Δίκαιο",
+              items: [
+                "Σύσταση εταιρειών",
+                "Λειτουργία εταιρειών – Συμβουλευτική σε ζητήματα εταιρικής διακυβέρνησης",
+                "Συμβουλευτική εταιρειών σε επίπεδο φορολογικής πολιτικής και συμμόρφωσης (tax planning)",
+                "Μετατροπή εταιριών με συγχώνευση, απορρόφηση ή απόσχιση κλάδου (M & As)",
+                "Εξαγορές εταιριών και μετοχών",
+                "Νομική υποστήριξη startup εταιρικών σχημάτων",
+                "Πτωχευτική διαδικασία και διαδικασίες διακανονισμού χρεών",
+                "Συμμετοχική χρηματοδότηση (crowdfunding)"
+              ]
+            },
+            {
+              icon: <MedicalServicesIcon className="service-icon" />,
               title: "Ιατρική αμέλεια – Ιατρική ευθύνη",
               items: [
                 "Δίκες για ιατρική αμέλεια, αστικές και ποινικές",
@@ -202,7 +229,7 @@ function App() {
         <h2>Βιογραφικό</h2>
         <div className="biography-wrapper">
           <div className="biography-image">
-            <img src="/lawyer-image.jpg" alt="Μάρκος Παπακωνσταντής" />
+            <img src={image} alt="Μάρκος Παπακωνσταντής" />
           </div>
           <div className="biography-text">
             <p>
@@ -221,12 +248,21 @@ function App() {
         </div>
 
         {showBiographyModal && (
-          <div className="modal-overlay">
-            <div className="biography-modal">
-              <button className="close-modal" onClick={() => setShowBiographyModal(false)}>×</button>
+          <div className={`service-modal-overlay ${showBiographyModal ? 'active' : ''}`} onClick={() => setShowBiographyModal(false)}>
+            <div 
+              className={`service-modal ${showBiographyModal ? 'active' : ''}`}
+              onClick={(e) => e.stopPropagation()}
+              style={{ 
+                width: '90%', 
+                height: '90vh',
+                maxWidth: '1200px',
+                overflowY: 'auto'
+              }}
+            >
+              <button className="service-modal-close" onClick={() => setShowBiographyModal(false)}>×</button>
               <h2>Αναλυτικό Βιογραφικό</h2>
               
-              <div className="biography-modal-content">
+              <div className="service-modal-content">
                 <div className="biography-modal-section">
                   <h3>ΣΠΟΥΔΕΣ</h3>
                   <ul>
@@ -246,7 +282,7 @@ function App() {
                 </div>
 
                 <div className="biography-modal-section">
-                  <h3>ΕΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
+                  <h3>ΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
                   <ul>
                     <li>ΓΑΛΛΙΚΑ: Άριστα</li>
                     <li>ΑΓΓΛΙΚΑ: Πολύ καλά</li>
@@ -301,6 +337,20 @@ function App() {
                 </div>
 
                 <div className="biography-modal-section">
+                  <h3>ΛΟΙΠΗ
+                  ΔΙΔΑΣΚΑΛΙΑ /
+                  ΕΠΙΜΟΡΦΩΣΕΙΣ</h3>
+                  <h4>1. ΕΞΩΤΕΡΙΚΟΣ ΣΥΝΕΡΓΑΤΗΣ ΕΥΡΩΠΑΙΚΗΣ ΕΠΙΤΡΟΠΗΣ ΓΙΑ ΘΕΜΑΤΑ
+                  ΕΥΡΩΜΕΣΟΓΕΙΑΚΗΣ ΣΥΝΕΡΓΑΣΙΑΣ</h4>
+                  <p>Μαρόκο, 3/2004
+Εισηγήσεις σε φοιτητές νομικών σχολών Μαρόκου (Rabat, Tanger, Tetouan,
+Casablanca), σε ανώτατα κυβερνητικά στελέχη και σε σπουδαστές στην Εθνική
+Σχολή δημόσιας Διοίκησης Μαρόκου.</p>
+                  <p>Θεματικές διδασκαλίας:</p>
+                  <ul>
+                    <li>Ευρωμεσογειακή Συνεργασία</li>
+                    <li>Ευρωπαϊκή Πολιτική Γειτονίας</li>
+                  </ul>
                   <h4>2. ΕΠΙΜΟΡΦΩΤΗΣ ΕΚΠΑΙΔΕΥΤΙΚΩΝ Β'ΒΑΘΜΙΑΣ ΣΕ ΘΕΜΑΤΑ ΕΥΡΩΠΑΙΚΗΣ ΕΝΩΣΗΣ</h4>
                   <p>9/2005 - 11/2006: «Ταχύρρυθμο Επιμορφωτικό Πρόγραμμα για την Ευρωπαϊκή Ένωση», Τμήμα Αξιολόγησης και Επιμόρφωσης Παιδαγωγικού Ινστιτούτου</p>
                   <p>Τόπος υλοποίησης: Περιφερειακά Επιμορφωτικά Κέντρα:</p>
@@ -500,9 +550,17 @@ function App() {
       </section>
 
       {showAppointmentModal && (
-        <div className="modal-overlay">
-          <div className="appointment-modal">
-            <button className="close-modal" onClick={() => setShowAppointmentModal(false)}>×</button>
+        <div className={`service-modal-overlay ${showAppointmentModal ? 'active' : ''}`} onClick={() => setShowAppointmentModal(false)}>
+          <div 
+            className={`service-modal ${showAppointmentModal ? 'active' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              width: '90%',
+              maxWidth: '600px',
+              overflowY: 'auto'
+            }}
+          >
+            <button className="service-modal-close" onClick={() => setShowAppointmentModal(false)}>×</button>
             <h2>Κλείστε Ραντεβού</h2>
             <form ref={form} onSubmit={sendEmail} className="appointment-form">
               <div className="form-group">
@@ -516,6 +574,14 @@ function App() {
               <div className="form-group">
                 <label>Τηλέφωνο</label>
                 <input type="tel" name="user_phone" required />
+              </div>
+              <div className="form-group">
+                <label>Τύπος Συνάντησης</label>
+                <select name="meeting_type" required>
+                  <option value="">Επιλέξτε τύπο συνάντησης</option>
+                  <option value="in_person">Δια ζώσης</option>
+                  <option value="online">Online (Zoom/Skype)</option>
+                </select>
               </div>
               <div className="form-group">
                 <label>Ημερομηνία</label>
