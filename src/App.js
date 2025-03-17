@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import logo from './logo3.png'; // Adjust the path and filename as needed
 import emailjs from '@emailjs/browser';
 import GavelIcon from '@mui/icons-material/Gavel';
@@ -57,8 +57,18 @@ function ServiceCard({ service }) {
 function App() {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const form = useRef();
   const [showBiographyModal, setShowBiographyModal] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAppointmentClick = () => {
     setShowAppointmentModal(true);
@@ -99,17 +109,166 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} alt="Site Logo" className="site-logo" />
-        <nav className="navbar">
-          <div className="nav-brand">ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ</div>
-          <div className="nav-links">
-            <a href="#home">ΑΡΧΙΚΗ</a>
-            <a href="#services">ΥΠΗΡΕΣΙΕΣ</a>
-            <a href="#biography">ΒΙΟΓΡΑΦΙΚΟ</a>
-            <a href="#contact">ΕΠΙΚΟΙΝΩΝΙΑ</a>
+        <div className="header-content" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          padding: '1rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <img src={logo} alt="Site Logo" className="site-logo" />
+            <div className="nav-brand">ΜΑΡΚΟΣ ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ</div>
+          </div>
+          <button 
+            className="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              display: windowWidth <= 768 ? 'block' : 'none',
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              fontSize: '24px',
+              cursor: 'pointer'
+            }}
+          >
+            ☰
+          </button>
+        </div>
+        <nav className={`navbar ${mobileMenuOpen ? 'mobile-open' : ''}`} style={{
+          display: windowWidth <= 768 ? (mobileMenuOpen ? 'flex' : 'none') : 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          padding: '0.5rem'
+        }}>
+          <div className="nav-links" style={{
+            display: 'flex',
+            gap: '2rem',
+            justifyContent: 'center',
+            flexDirection: windowWidth <= 768 ? 'column' : 'row',
+            width: '100%',
+            alignItems: 'center'
+          }}>
+            <a href="#home" onClick={() => setMobileMenuOpen(false)}>ΑΡΧΙΚΗ</a>
+            <a href="#services" onClick={() => setMobileMenuOpen(false)}>ΥΠΗΡΕΣΙΕΣ</a>
+            <a href="#biography" onClick={() => setMobileMenuOpen(false)}>ΒΙΟΓΡΑΦΙΚΟ</a>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>ΕΠΙΚΟΙΝΩΝΙΑ</a>
           </div>
         </nav>
       </header>
+
+      <style>
+        {`
+          .App {
+            overflow-x: hidden;
+          }
+
+          .header-content {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+          }
+
+          .site-logo {
+            height: 50px;
+            width: auto;
+          }
+
+          @media screen and (max-width: 768px) {
+            .navbar {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              background: #1a1a2e;
+              flex-direction: column;
+              padding: 1rem;
+              z-index: 1000;
+              height: 100vh;
+            }
+
+            .nav-brand {
+              text-align: center;
+              margin-bottom: 2rem;
+            }
+
+            .nav-links {
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+            }
+
+            .nav-links a {
+              display: block;
+              padding: 1rem;
+              text-align: center;
+              color: white;
+              text-decoration: none;
+              font-size: 1.2rem;
+              border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .services-grid {
+              grid-template-columns: 1fr !important;
+              padding: 1rem !important;
+            }
+
+            .biography-wrapper {
+              grid-template-columns: 1fr !important;
+              padding: 1rem !important;
+            }
+
+            .contact-wrapper {
+              grid-template-columns: 1fr !important;
+              padding: 1rem !important;
+            }
+
+            .hero-section {
+              padding: 2rem 1rem;
+              margin-top: 60px;
+            }
+
+            .hero-section p {
+              font-size: 1rem;
+              line-height: 1.5;
+              text-align: center;
+            }
+
+            .service-card {
+              margin-bottom: 1rem;
+            }
+
+            .service-modal {
+              width: 95% !important;
+              margin: 1rem auto !important;
+              max-height: 90vh !important;
+            }
+
+            .appointment-form {
+              padding: 1rem;
+            }
+
+            .form-group {
+              margin-bottom: 1rem;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+              width: 100%;
+              padding: 0.8rem;
+              font-size: 16px;
+            }
+
+            .map-section {
+              height: 300px;
+            }
+          }
+        `}
+      </style>
 
       <section id="home" className="hero-section">
         <p>Προσφέρουμε εξειδικευμένες και ολοκληρωμένες νομικές υπηρεσίες, προσαρμοσμένες στις ιδιαίτερες ανάγκες κάθε πελάτη, διασφαλίζοντας την πλήρη προστασία των δικαιωμάτων και των συμφερόντων σας.</p>
@@ -122,9 +281,9 @@ function App() {
         <h2>Υπηρεσίες</h2>
         <div className="services-grid" style={{ 
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '2rem',
-          padding: '2rem'
+          gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(3, 1fr)',
+          gap: window.innerWidth <= 768 ? '1rem' : '2rem',
+          padding: window.innerWidth <= 768 ? '1rem' : '2rem'
         }}>
           {[
             {
@@ -225,309 +384,163 @@ function App() {
           ))}
         </div>
       </section>
-      <section id="biography" className="biography-section">
-        <h2>Βιογραφικό</h2>
-        <div className="biography-wrapper">
-          <div className="biography-image">
-            <img src={image} alt="Μάρκος Παπακωνσταντής" />
+
+      <section id="biography" className="biography-section" style={{
+        padding: '4rem 0',
+        background: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
+      }}>
+        <h2 style={{
+          textAlign: 'center',
+          color: '#1a1a2e',
+          marginBottom: '2rem',
+          fontSize: windowWidth <= 768 ? '1.8rem' : '2.2rem'
+        }}>Βιογραφικό</h2>
+        <div className="biography-wrapper" style={{
+          display: 'flex',
+          flexDirection: windowWidth <= 768 ? 'column' : 'row',
+          gap: '2rem',
+          padding: '2rem',
+          background: '#1a1a2e',
+          borderRadius: '12px',
+          margin: '0 auto',
+          maxWidth: '1200px',
+          width: windowWidth <= 768 ? '90%' : '80%',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div className="biography-image" style={{
+            flex: windowWidth <= 768 ? '1' : '0.8',
+            background: '#1a1a2e',
+            padding: '1rem',
+            borderRadius: '12px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 'fit-content',
+            margin: '0 auto'
+          }}>
+            <img src={image} alt="Μάρκος Παπακωνσταντής" style={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: '8px',
+              objectFit: 'cover'
+            }} />
           </div>
-          <div className="biography-text">
-            <p>
-            Ο δικηγόρος Μάρκος Παπακωνσταντής διαθέτει μια 25ετή εμπειρία στην παροχή νομικών
-υπηρεσιών σε συμβουλευτικό και δικαστηριακό επίπεδο σε φυσικά και νομικά πρόσωπα τόσο στα
-εθνικά όσο και σε διεθνή δικαστήρια. Παράλληλα, διαθέτει μια 20ετή ακαδημαϊκή και
-επιστημονική εμπειρία στο ενωσιακό δίκαιο κυρίως στα θέματα του Χώρου Ελευθερίας, Ασφάλειας
-και Δικαιοσύνης (ΧΕΑΔ) της Ευρωπαϊκής Ένωσης και σε θέματα προστασίας των Ανθρωπίνων
-Δικαιωμάτων.
+          <div className="biography-text" style={{
+            flex: windowWidth <= 768 ? '1' : '1.2',
+            background: '#1a1a2e',
+            padding: '2rem',
+            borderRadius: '12px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '1.5rem',
+            alignItems: 'center'
+          }}>
+            <p style={{
+              fontSize: windowWidth <= 768 ? '1rem' : '1.1rem',
+              lineHeight: '1.6',
+              color: 'white',
+              margin: 0,
+              textAlign: 'justify'
+            }}>
+              Ο δικηγόρος Μάρκος Παπακωνσταντής διαθέτει μια 25ετή εμπειρία στην παροχή νομικών
+              υπηρεσιών σε συμβουλευτικό και δικαστηριακό επίπεδο σε φυσικά και νομικά πρόσωπα τόσο στα
+              εθνικά όσο και σε διεθνή δικαστήρια. Παράλληλα, διαθέτει μια 20ετή ακαδημαϊκή και
+              επιστημονική εμπειρία στο ενωσιακό δίκαιο κυρίως στα θέματα του Χώρου Ελευθερίας, Ασφάλειας
+              και Δικαιοσύνης (ΧΕΑΔ) της Ευρωπαϊκής Ένωσης και σε θέματα προστασίας των Ανθρωπίνων
+              Δικαιωμάτων.
             </p>
             
-            <button className="biography-button" onClick={() => setShowBiographyModal(true)}>
+            <button 
+              className="biography-button" 
+              onClick={() => setShowBiographyModal(true)}
+              style={{
+                background: '#beaf94',
+                color: '#1a1a2e',
+                border: 'none',
+                padding: '1rem 2rem',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                width: windowWidth <= 768 ? '100%' : 'auto',
+                alignSelf: 'center',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                ':hover': {
+                  background: '#C5A028'
+                }
+              }}
+            >
               Αναλυτικό Βιογραφικό
             </button>
           </div>
         </div>
-
-        {showBiographyModal && (
-          <div className={`service-modal-overlay ${showBiographyModal ? 'active' : ''}`} onClick={() => setShowBiographyModal(false)}>
-            <div 
-              className={`service-modal ${showBiographyModal ? 'active' : ''}`}
-              onClick={(e) => e.stopPropagation()}
-              style={{ 
-                width: '90%', 
-                height: '90vh',
-                maxWidth: '1200px',
-                overflowY: 'auto'
-              }}
-            >
-              <button className="service-modal-close" onClick={() => setShowBiographyModal(false)}>×</button>
-              <h2>Αναλυτικό Βιογραφικό</h2>
-              
-              <div className="service-modal-content">
-                <div className="biography-modal-section">
-                  <h3>ΣΠΟΥΔΕΣ</h3>
-                  <ul>
-                    <li>1989 – 1993: Maîtrise en Droit des Affaires, Université Grenoble-Alpes, Faculté de Droit</li>
-                    <li>1993 - 1995: Diplôme d'Études Approfondies (DEA) en Droit des Affaires Européennes, Université de Nancy II, Faculté de Droit, Centre Européen Universitaire, Droit européen des Affaires</li>
-                    <li>1995 – 2000: Doctorat en Droit Européen, Université de Nancy II, Faculté de Droit</li>
-                    <li>2000 – 2004: Δημοκρίτειο Πανεπιστήμιο Θράκης, Νομική Σχολή</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΔΙΑΚΡΙΣΕΙΣ – ΒΡΑΒΕΙΑ</h3>
-                  <ul>
-                    <li>2002: Καλύτερη διδακτορική διατριβή για τη διετία 2000-2001 που υποστηρίχτηκε σε Ελλάδα και στο εξωτερικό σχετικά με τις ιστορικές, θεσμικές, δικαϊκές, πολιτικές, οικονομικές και κοινωνικές πτυχές της ευρωπαϊκής ολοκλήρωσης, Ελληνική Πανεπιστημιακή Ένωση Ευρωπαϊκών Σπουδών (Ε.Π.Ε.Ε.Σ.)</li>
-                    <li>2002: Χρηματικό βραβείο για τη διδακτορική διατριβή, Γραφείο του Ευρωπαϊκού Κοινοβουλίου για την Ελλάδα</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
-                  <ul>
-                    <li>ΓΑΛΛΙΚΑ: Άριστα</li>
-                    <li>ΑΓΓΛΙΚΑ: Πολύ καλά</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΕΠΑΓΓΕΛΜΑΤΙΚΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑ</h3>
-                  <ul>
-                    <li>2003 – Σήμερα: Δικηγόρος Παρ'Αρείω (ΑΜ ΔΣΑ 27087)</li>
-                    <li>1/2010 – 6/2011: Επιστημονικός Συνεργάτης στο Υπουργείο Εσωτερικών</li>
-                    <li>6/2013 – 6/2014: Πρόεδρος σε 3μελή επιτροπή της Αρχής Προσφυγών για το Άσυλο (Ν. 3907/2011). Αξιολόγηση από την Εθνική Επιτροπή για τα Δικαιώματα του Ανθρώπου</li>
-                    <li>11/2015 – 6/2019: Ειδικός Σύμβουλος στο Υπουργείο Μεταναστευτικής Πολιτικής</li>
-                    <li>9/2022 – 1/2023: E&Y. Συμμετοχή στην εκπόνηση μελετών για τη βελτίωση του επιτελικού κράτους</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΑΚΑΔΗΜΑΪΚΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑ</h3>
-                  
-                  <h4>1/2008 – 2024: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΔΗΜΟΣΙΑΣ ΔΙΟΙΚΗΣΗΣ</h4>
-                  <p>ΠΡΟΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ: Συνδιδασκαλία και αυτοδύναμη διδασκαλία μαθημάτων:</p>
-                  <ul>
-                    <li>Εισαγωγή στο Ευρωπαϊκό Δίκαιο</li>
-                    <li>Ευρωπαϊκό Δίκαιο</li>
-                    <li>Ειδικά θέματα ευρωπαϊκής ολοκλήρωσης</li>
-                    <li>Ευρωπαϊκό Φορολογικό Δίκαιο</li>
-                  </ul>
-
-                  <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΘΝΙΚΗ ΚΑΙ ΕΝΩΣΙΑΚΗ ΔΙΟΙΚΗΣΗ: Αυτοδύναμη διδασκαλία μαθήματος: Εθνική και Ενωσιακή Διοίκηση</p>
-
-                  <h4>2/2015 - 2018: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΚΟΙΝΩΝΙΟΛΟΓΙΑΣ</h4>
-                  <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΥΡΩΠΑΪΚΗ ΚΟΙΝΩΝΙΚΗ ΠΟΛΙΤΙΚΗ</p>
-                  <p>Συνδιδασκαλία μαθημάτων:</p>
-                  <ul>
-                    <li>Ευρωπαϊκή Κοινωνική Πολιτική</li>
-                    <li>Κοινωνικό κράτος στην Ελλάδα</li>
-                    <li>Οικονομική κρίση και κοινωνικό κράτος στην Ελλάδα και την Ευρώπη: εξελίξεις, προβλήματα, προοπτικές</li>
-                  </ul>
-
-                  <h4>3/2022 – 2024: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΔΙΕΘΝΩΝ, ΕΥΡΩΠΑΪΚΩΝ ΚΑΙ ΠΕΡΙΦΕΡΕΙΑΚΩΝ ΣΠΟΥΔΩΝ</h4>
-                  <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – Η ΕΛΛΑΔΑ ΚΑΙ Ο ΚΟΣΜΟΣ</p>
-                  <p>Θεματικές διδασκαλίας:</p>
-                  <ul>
-                    <li>Πολιτική μετανάστευσης και ασύλου της ΕΕ</li>
-                    <li>Αντιτρομοκρατική πολιτική της ΕΕ</li>
-                  </ul>
-
-                  <h4>4/2022 – Σήμερα: ΕΛΛΗΝΙΚΟ ΑΝΟΙΚΤΟ ΠΑΝΕΠΙΣΤΗΜΙΟ</h4>
-                  <p>ΣΧΟΛΗ ΚΟΙΝΩΝΙΚΩΝ ΕΠΙΣΤΗΜΩΝ - ΜΕΤΑΠΤΥΧΙΑΚΟ/ΕΙΔΙΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΥΡΩΠΑΙΚΟ ΔΙΚΑΙΟ</p>
-                  <p>Θεματική Ενότητα [ΕΔΙ62] Ε.Ε.: Χώρος Ελευθερίας - Ασφάλειας και Δικαιοσύνης</p>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΛΟΙΠΗ
-                  ΔΙΔΑΣΚΑΛΙΑ /
-                  ΕΠΙΜΟΡΦΩΣΕΙΣ</h3>
-                  <h4>1. ΕΞΩΤΕΡΙΚΟΣ ΣΥΝΕΡΓΑΤΗΣ ΕΥΡΩΠΑΙΚΗΣ ΕΠΙΤΡΟΠΗΣ ΓΙΑ ΘΕΜΑΤΑ
-                  ΕΥΡΩΜΕΣΟΓΕΙΑΚΗΣ ΣΥΝΕΡΓΑΣΙΑΣ</h4>
-                  <p>Μαρόκο, 3/2004
-Εισηγήσεις σε φοιτητές νομικών σχολών Μαρόκου (Rabat, Tanger, Tetouan,
-Casablanca), σε ανώτατα κυβερνητικά στελέχη και σε σπουδαστές στην Εθνική
-Σχολή δημόσιας Διοίκησης Μαρόκου.</p>
-                  <p>Θεματικές διδασκαλίας:</p>
-                  <ul>
-                    <li>Ευρωμεσογειακή Συνεργασία</li>
-                    <li>Ευρωπαϊκή Πολιτική Γειτονίας</li>
-                  </ul>
-                  <h4>2. ΕΠΙΜΟΡΦΩΤΗΣ ΕΚΠΑΙΔΕΥΤΙΚΩΝ Β'ΒΑΘΜΙΑΣ ΣΕ ΘΕΜΑΤΑ ΕΥΡΩΠΑΙΚΗΣ ΕΝΩΣΗΣ</h4>
-                  <p>9/2005 - 11/2006: «Ταχύρρυθμο Επιμορφωτικό Πρόγραμμα για την Ευρωπαϊκή Ένωση», Τμήμα Αξιολόγησης και Επιμόρφωσης Παιδαγωγικού Ινστιτούτου</p>
-                  <p>Τόπος υλοποίησης: Περιφερειακά Επιμορφωτικά Κέντρα:</p>
-                  <ul>
-                    <li>Πειραιά (10-11/3/2006)</li>
-                    <li>Γιαννιτσών (17-18/3/2006)</li>
-                    <li>Ηρακλείου (14-15/4/2006)</li>
-                    <li>Χαλκίδας (31/3-01/04/2006)</li>
-                    <li>Κοζάνης (3-4/11/2006)</li>
-                  </ul>
-                  <p>Θεματικές διδασκαλίας:</p>
-                  <ul>
-                    <li>Ιστορία και αναγκαιότητα της ευρωπαϊκής</li>
-                    <li>Δομή και λειτουργία της Ευρωπαϊκής Ένωσης</li>
-                    <li>Αρμοδιότητες, πολιτικές της Ευρωπαϊκής Ένωσης</li>
-                  </ul>
-
-                  <h4>3. ΔΙΑΛΕΚΤΗΣ-ΚΑΘΗΓΗΤΗΣ ΣΧΟΛΗ ΕΘΝΙΚΗΣ ΑΣΦΑΛΕΙΑΣ</h4>
-                  <p>ΑΣΤΥΝΟΜΙΚΗ ΑΚΑΔΗΜΙΑ, Θρακομακεδόνες, 2011-2012</p>
-                  <p>Θεματικές διδασκαλίας:</p>
-                  <ul>
-                    <li>Αίτια εισόδου, μεταναστευτικές εισροές και απόθεμα στην Ελλάδα την τελευταία εικοσαετία</li>
-                    <li>Δημογραφικές και οικονομικές επιδράσεις της μετανάστευσης στην Ελλάδα ως χώρα υποδοχής μεταναστών. Κοινοτική – ελληνική μεταναστευτική πολιτική</li>
-                  </ul>
-
-                  <h4>4. ΔΙΔΑΣΚΑΛΙΕΣ ΣΤΟ ΠΛΑΙΣΙΟ ΕΡΓΟΥ «ΑΚΑΔΗΜΙΑ ΠΛΑΤΩΝΟΣ – Η ΠΟΛΙΤΕΙΑ ΚΑΙ Ο ΠΟΛΙΤΗΣ»</h4>
-                  <p>ΕΚΠΑ, 11/2012 – 07/2015</p>
-                  <p>Θεματικές διδασκαλίας:</p>
-                  <ul>
-                    <li>Ιδανική Πολιτεία. Ουτοπία;</li>
-                    <li>Από την πολίτη της πόλης-κράτους στον σύγχρονο πολίτη</li>
-                    <li>Η τέχνη (;) του κυβερνάν</li>
-                  </ul>
-
-                  <h4>5-7. ΕΙΣΗΓΗΣΕΙΣ ΣΕ ΕΠΙΜΟΡΦΩΣΕΙΣ ΔΙΚΑΣΤΙΚΩΝ ΛΕΙΤΟΥΡΓΩΝ</h4>
-                  <ul>
-                    <li>Θεσσαλονίκη, ΕΣΔι, 19-20/1/2017: «Μεταναστευτικές και προσφυγικές ροές στην Ελλάδα»</li>
-                    <li>Θεσσαλονίκη, ΕΣΔι, 6/3/2017: «Πρόσφατη νομολογία ΔΕΕ σε θέματα διεθνούς προστασίας»</li>
-                    <li>Αθήνα, 27-28/11/2017: Παγκόσμιο Συνέδριο Διεθνούς Ένωσης Δικαστών για το Άσυλο</li>
-                  </ul>
-
-                  <h4>8. ΕΚΠΑΙΔΕΥΤΗΣ ΚΕΜΕΑ</h4>
-                  <p>Δράση: «Ενίσχυση των Φορέων Επιβολής του Νόμου για την Αναγνώριση και την Καταπολέμηση της Ριζοσπαστικοποίησης και του Εξτρεμισμού»</p>
-                  <p>Αθήνα, 4/2019 – 9/2019</p>
-                  <p>Θεματικές εκπαίδευσης:</p>
-                  <ul>
-                    <li>Η λειτουργία του Χώρου Ελευθερίας, Ασφάλειας και Δικαιοσύνης (ΧΕΑΔ) της ΕΕ</li>
-                    <li>Ορισμός τρομοκρατίας κατά το διεθνές και ενωσιακό δίκαιο</li>
-                    <li>Εξέλιξη του φαινομένου της τρομοκρατίας εντός των κρατών μελών της ΕΕ</li>
-                    <li>Πλαίσιο πρόληψης και καταπολέμησης της τρομοκρατίας σύμφωνα με ενωσιακό δίκαιο</li>
-                    <li>Αντιμετώπιση του φαινομένου αλλοδαπών τρομοκρατών μαχητών σύμφωνα με σχετικό εγχειρίδιο του FRONTEX</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΜΕΛΕΤΕΣ / ΕΡΕΥΝΑ</h3>
-                  <ul>
-                    <li>European Migration Network (EMN), Τρίτη Εστιασμένη Μελέτη 2013, Αναγνώριση Θυμάτων Εμπορίας Ανθρώπων σε Διαδικασίες Διεθνούς Προστασίας (Άσυλο) και Αναγκαστικής Επιστροφής</li>
-                    <li>European Migration Network (EMN), Ελλάδα, Ετήσια Έκθεση Πολιτικής, 2012</li>
-                    <li>European Migration Network (EMN), Δεύτερη Εστιασμένη Μελέτη 2013, Η οργάνωση των δομών υποδοχής των αιτούντων άσυλο στα διάφορα κράτη μέλη</li>
-                    <li>«Μετα-ανάλυση των ερευνών που έχουν διαξαχθεί για τη μετανάστευση σε σημαντικά και σχετικά με την ένταξη πεδία, (Υγεία, Κοινωνική Ασφάλιση, Εργασία, Εκπαίδευση κ.λπ.), ΕΚΚΕ, 2013</li>
-                    <li>Μέλος ομάδας εργασίας εντός Υπουργείου Δικαιοσύνης για τη σύνταξη μελέτης για την προετοιμασία της χώρας σε περίπτωση μαζικής ροής υποθέσεων προσφυγικού δικαίου, 2016</li>
-                    <li>Σύνταξη εγχειριδίου στο πλαίσιο του προγράμματος «Ενίσχυση των Φορέων Επιβολής του Νόμου για την αναγνώριση και την καταπολέμηση της ριζοσπαστικοποίησης και του εξτρεμισμού», ΚΕΜΕΑ, 2018-2019</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΕΙΣΗΓΗΣΕΙΣ ΣΕ ΣΥΝΕΔΡΙΑ</h3>
-                  <ul>
-                    <li>Ημερίδα Δημοκρίτειου Πανεπιστημίου Θράκης με θέμα: «Η εξωτερική πολιτική της ΕΕ», Κομοτηνή, 28/3/2002</li>
-                    
-                    <li>Ημερίδα Ένωσης Νέων Επιστημόνων Ευρωπαϊκών Σπουδών με θέμα: «Δυναμική της ευρωπαϊκής ολοκλήρωσης και συνταγματοποίηση». Τίτλος εισήγησης: «Η συμβολή της Κοινής Εξωτερικής Πολιτικής και Πολιτικής Ασφάλειας (ΚΕΠΠΑ) στην ευρωπαϊκή ολοκλήρωση και η Συνταγματική Συνθήκη», Αθήνα, 05/11/2003</li>
-                    
-                    <li>Ημερίδα πρεσβείας της Κύπρου με θέμα: «Η πρόκληση της Ευρώπης των Εικοσιπέντε. Η Κύπρος στην Ευρωπαϊκή Ένωση». Τίτλος εισήγησης: «Η διεύρυνση και οι σχέσεις της Ένωσης με τα νέα γειτονικά της κράτη», Αθήνα, 16/4/2004</li>
-                    
-                    <li>Ημερίδα Γραφείου του Ευρωπαϊκού Κοινοβουλίου στην Αθήνα με θέμα: «Η δυναμική του Ευρωπαϊκού Συντάγματος». Τίτλος εισήγησης: «Το θεσμικό πλαίσιο της ΚΕΠΠΑ στο Ευρωπαϊκό Σύνταγμα», Αθήνα, 28/2/2005</li>
-                    
-                    <li>Ημερίδα Κέντρου Διεθνούς και Ευρωπαϊκού Οικονομικού Δικαίου με θέμα: «Το Ευρωπαϊκό Σύνταγμα. Προκλήσεις και προοπτικές». Τίτλος εισήγησης: «Η ΚΕΠΠΑ στη Συνθήκη για το Ευρωπαϊκό Σύνταγμα», Θεσσαλονίκη, 11/4/2005</li>
-                    
-                    <li>Εκδήλωση Α.Ο. Αχαΐας «Γαλήνη» με θέμα: «Ευρωπαϊκό Σύνταγμα. Ένα Σύνταγμα για τον πολίτη;». Τίτλος εισήγησης: «Το Ευρωπαϊκό Σύνταγμα: ένας σταθμός ή το τέλος της ευρωπαϊκής ολοκλήρωσης;», Πάτρα, 12/5/2005</li>
-                    
-                    <li>Διεθνή διημερίδα του Daedalos Institute of Geopolitics, με θέμα "Peoples in Migration in the 21st century". Τίτλος εισήγησης: «The political and juridical perspectives on the integration of immigrants in Greece", Λευκωσία, 14-16/12/2006</li>
-                    
-                    <li>Ημερίδα της Αναπτυξιακής Σύμπραξης «Ξένιος Δίας» με θέμα: «Μέθοδοι προσέγγισης μεταναστών με στόχο την καταπολέμηση των διακρίσεων». Τίτλος εισήγησης: «Η κοινωνική ένταξη των μεταναστών σύμφωνα με τον Ν. 3386/2005», Αθήνα, 31/1/2007</li>
-                    
-                    <li>Διεθνές συνέδριο του Strategy International (SI) με θέμα: «NATO, UN, EU in the New Security Environment». Τίτλος εισήγησης: «Migration as a Security Issue in the European Union», Θεσσαλονίκη, 10/2/2011</li>
-                    
-                    <li>Εκδήλωση από το Σπίτι της Ευρώπης στη Ρόδο με θέμα: «Η μετανάστευση και το μέλλον της Ευρώπης». Τίτλος εισήγησης: «Η ευρωπαϊκή μεταναστευτική πολιτική. Η εφαρμογή της στην Ελλάδα», Ρόδος, 8/10/2014</li>
-                    
-                    <li>Ημερίδα της Ιεράς Μονής Πεντέλης με θέμα: «Ο διαθρησκευτικός διάλογος στην Ελλάδα και την Ευρώπη». Τίτλος εισήγησης: «Ο ρόλος της θρησκείας στη διαδικασία της ευρωπαϊκής ολοκλήρωσης», Αθήνα, 24.6/2015</li>
-                    
-                    <li>Ημερίδα του Ελληνικού Συμβουλίου για τους Πρόσφυγες με θέμα: «Μετά την αναγνώριση τι; Ζητήματα κοινωνικής ένταξης δικαιούχων διεθνούς προστασίας». Τίτλος εισήγησης: «Η τελευταίες εξελίξεις σε θέματα διεθνούς προστασίας σε Ελλάδα και Ευρώπη», Αθήνα, 10/5/2016</li>
-                    
-                    <li>Συνέδριο της Ένωσης Διοικητικών Δικαστών με θέμα: «Το νέο τοπίο της διοικητικής δικαιοσύνης στην εποχή της κρίσης - προοπτικές». Τίτλος εισήγησης: «Το παρόν και το μέλλον του Κοινού Ευρωπαϊκού Συστήματος Ασύλου», Θεσσαλονίκη, 02/06/2018</li>
-                    
-                    <li>5ο Πανελλήνιο Συνέδριο Ένωσης Δικαίου Αλλοδαπών και Μετανάστευσης με θέμα: «Πρόσφατες εξελίξεις στη θεωρία και νομολογία στο δίκαιο καταστάσεως αλλοδαπών». Τίτλος εισήγησης: «Πρόσφατη νομολογία ΔΕΕ στο μεταναστευτικό δίκαιο», Αθήνα, 30/3/2019</li>
-                    
-                    <li>Εκδήλωση του Ευρωπαϊκού Κέντρου Αριστείας Jean Monnet του ΕΚΠΑ με θέμα: «Το Ευρωπαϊκό Σύμφωνο για τη Μετανάστευση και το Άσυλο: Προκλήσεις και Προοπτικές». Τίτλος εισήγησης: «Η εξέλιξη του μεταναστευτικού δικαίου της ΕΕ εντός του Χώρου Ελευθερίας, Ασφάλειας και Δικαιοσύνης», Αθήνα, 06/04/2023</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΔΗΜΟΣΙΕΥΣΕΙΣ</h3>
-                  
-                  <h4>Α. ΜΟΝΟΓΡΑΦΙΕΣ</h4>
-                  <ul>
-                    <li>La Grèce et la politique étrangère de l'Union européenne, Lille, ANRT, 2002</li>
-                    <li>Οι πολιτικές της ΕΕ: Εξωτερική, Γεωργική, Μεταναστευτική, Αθήνα, Σάκκουλας, 2016</li>
-                    <li>Η τρομοκρατία στον χώρο ελευθερίας, ασφάλειας και δικαιοσύνης της ΕΕ, Αθήνα, Νομική Βιβλιοθήκη, 2019</li>
-                  </ul>
-
-                  <h4>Β. ΣΥΜΜΕΤΟΧΗ ΣΕ ΣΥΛΛΟΓΙΚΑ ΕΡΓΑ</h4>
-                  <ul>
-                    <li>«Η εξωτερική πολιτική της ΕΕ», στο συλλογικό έργο «Ευρωπαϊκή Ένωση: Δημιουργία, εξέλιξη, προοπτικές», Αθήνα, Νομική Βιβλιοθήκη, 2015</li>
-                    <li>«Το προσφυγικό δίκαιο στην ΕΕ», στο συλλογικό έργο «Δίκαιο των αλλοδαπών», Αθήνα, Νομική Βιβλιοθήκη, 2017</li>
-                  </ul>
-
-                  <h4>Γ. ΕΠΙΣΤΗΜΟΝΙΚΕΣ ΕΡΓΑΣΙΕΣ</h4>
-                  <ul>
-                    <li>«Η προστασία των θεμελιωδών δικαιωμάτων στην ΕΕ», Νομικό Βήμα, 2014</li>
-                    <li>«Η αρχή της αλληλεγγύης στο προσφυγικό δίκαιο της ΕΕ», Εφημερίδα Διοικητικού Δικαίου, 2016</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h4>Δ. ΣΧΟΛΙΑΣΜΟΣ ΑΠΟΦΑΣΕΩΝ ΔΕΕ</h4>
-                  <ul>
-                    <li>«Σχόλιο στην απόφαση C-638/16 PPU, X και X κατά Βελγίου», Εφημερίδα Διοικητικού Δικαίου, 2017</li>
-                    <li>«Σχόλιο στην απόφαση C-490/16, A.S. κατά Σλοβενίας», Εφημερίδα Διοικητικού Δικαίου, 2018</li>
-                    <li>«Σχόλιο στην απόφαση C-713/17, Ayubi κατά Αυστρίας», Εφημερίδα Διοικητικού Δικαίου, 2019</li>
-                  </ul>
-
-                  <h4>Ε. ΕΠΙΣΚΟΠΗΣΗ ΝΟΜΟΛΟΓΙΑΣ ΔΕΕ</h4>
-                  <ul>
-                    <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2015-2016)», Εφημερίδα Διοικητικού Δικαίου, 2017</li>
-                    <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2017)», Εφημερίδα Διοικητικού Δικαίου, 2018</li>
-                    <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2018)», Εφημερίδα Διοικητικού Δικαίου, 2019</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΠΙΣΤΟΠΟΙΗΣΕΙΣ</h3>
-                  <ul>
-                    <li>Πιστοποιημένος εκπαιδευτής εκπαιδευτών, Ινστιτούτο Επιμόρφωσης του ΕΚΔΔΑ, 03/2012 - 4/2012</li>
-                    <li>Πιστοποιημένος σε θέματα Ασύλου και στην ΕΣΔΑ, European Programme for Human Rights Education for Legal Professionals (HELP), 2017</li>
-                    <li>Πιστοποιημένoς σε θέματα Ασύλου, European Asylum Support Office (EASO), 2014</li>
-                    <li>Πιστοποιημένος σε θέματα εξέτασης αιτημάτων ασύλου, European Asylum Support Office (EASO), 2013</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΣΥΜΜΕΤΟΧΗ ΣΕ ΕΠΙΣΤΗΜΟΝΙΚΕΣ ΕΤΑΙΡΕΙΕΣ</h3>
-                  <ul>
-                    <li>Μέλος της Ελληνικής Εταιρείας Διεθνούς Δικαίου και Διεθνών Σχέσεων</li>
-                    <li>Μέλος της Ένωσης Ευρωπαίων Διοικητικών Δικαστών</li>
-                    <li>Μέλος της Ένωσης Δικαίου Αλλοδαπών και Μετανάστευσης</li>
-                    <li>Μέλος της Ελληνικής Ένωσης για τα Δικαιώματα του Ανθρώπου</li>
-                    <li>Μέλος της Ελληνικής Ένωσης Ευρωπαϊκού Δικαίου</li>
-                  </ul>
-                </div>
-
-                <div className="biography-modal-section">
-                  <h3>ΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
-                  <ul>
-                    <li>ΓΑΛΛΙΚΑ: Άριστα</li>
-                    <li>ΑΓΓΛΙΚΑ: Πολύ καλά</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </section>
+
+      <style>
+        {`
+          .biography-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 4rem 0;
+            background: white;
+          }
+
+          @media screen and (max-width: 768px) {
+            .biography-section {
+              padding: 2rem 0;
+            }
+
+            .biography-section h2 {
+              font-size: 1.8rem;
+              margin-bottom: 1rem;
+              text-align: center;
+              color: #1a1a2e;
+            }
+
+            .biography-wrapper {
+              margin: 1rem auto;
+              width: 90%;
+            }
+
+            .biography-text p {
+              font-size: 1rem !important;
+              line-height: 1.6 !important;
+              text-align: justify !important;
+            }
+
+            .biography-button {
+              margin-top: 1rem;
+              width: 100%;
+            }
+
+            .biography-button:hover {
+              background: #C5A028 !important;
+            }
+          }
+        `}
+      </style>
 
       <section id="contact" className="contact-section">
         <h2>Επικοινωνία</h2>
-        <div className="contact-wrapper">
+        <div className="contact-wrapper" style={{
+          display: 'grid',
+          gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(2, 1fr)',
+          gap: window.innerWidth <= 768 ? '1rem' : '2rem',
+          padding: window.innerWidth <= 768 ? '1rem' : '2rem'
+        }}>
           <div className="contact-info">
             <p>Διεύθυνση: Ελ. Βενιζέλου 56, Αθήνα 10678</p>
             <p>Κινητό: +30 6932602151</p>
@@ -619,6 +632,364 @@ Casablanca), σε ανώτατα κυβερνητικά στελέχη και σ
           </div>
         </div>
       )}
+
+      {showBiographyModal && (
+        <div className={`service-modal-overlay ${showBiographyModal ? 'active' : ''}`} onClick={() => setShowBiographyModal(false)}>
+          <div 
+            className={`service-modal ${showBiographyModal ? 'active' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              width: '90%', 
+              height: '90vh',
+              maxWidth: '1200px',
+              overflowY: 'auto'
+            }}
+          >
+            <button className="service-modal-close" onClick={() => setShowBiographyModal(false)}>×</button>
+            <h2>Αναλυτικό Βιογραφικό</h2>
+            
+            <div className="service-modal-content">
+              <div className="biography-modal-section">
+                <h3>ΣΠΟΥΔΕΣ</h3>
+                <ul>
+                  <li>1989 – 1993: Maîtrise en Droit des Affaires, Université Grenoble-Alpes, Faculté de Droit</li>
+                  <li>1993 - 1995: Diplôme d'Études Approfondies (DEA) en Droit des Affaires Européennes, Université de Nancy II, Faculté de Droit, Centre Européen Universitaire, Droit européen des Affaires</li>
+                  <li>1995 – 2000: Doctorat en Droit Européen, Université de Nancy II, Faculté de Droit</li>
+                  <li>2000 – 2004: Δημοκρίτειο Πανεπιστήμιο Θράκης, Νομική Σχολή</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΔΙΑΚΡΙΣΕΙΣ – ΒΡΑΒΕΙΑ</h3>
+                <ul>
+                  <li>2002: Καλύτερη διδακτορική διατριβή για τη διετία 2000-2001 που υποστηρίχτηκε σε Ελλάδα και στο εξωτερικό σχετικά με τις ιστορικές, θεσμικές, δικαϊκές, πολιτικές, οικονομικές και κοινωνικές πτυχές της ευρωπαϊκής ολοκλήρωσης, Ελληνική Πανεπιστημιακή Ένωση Ευρωπαϊκών Σπουδών (Ε.Π.Ε.Ε.Σ.)</li>
+                  <li>2002: Χρηματικό βραβείο για τη διδακτορική διατριβή, Γραφείο του Ευρωπαϊκού Κοινοβουλίου για την Ελλάδα</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
+                <ul>
+                  <li>ΓΑΛΛΙΚΑ: Άριστα</li>
+                  <li>ΑΓΓΛΙΚΑ: Πολύ καλά</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΕΠΑΓΓΕΛΜΑΤΙΚΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑ</h3>
+                <ul>
+                  <li>2003 – Σήμερα: Δικηγόρος Παρ'Αρείω (ΑΜ ΔΣΑ 27087)</li>
+                  <li>1/2010 – 6/2011: Επιστημονικός Συνεργάτης στο Υπουργείο Εσωτερικών</li>
+                  <li>6/2013 – 6/2014: Πρόεδρος σε 3μελή επιτροπή της Αρχής Προσφυγών για το Άσυλο (Ν. 3907/2011). Αξιολόγηση από την Εθνική Επιτροπή για τα Δικαιώματα του Ανθρώπου</li>
+                  <li>11/2015 – 6/2019: Ειδικός Σύμβουλος στο Υπουργείο Μεταναστευτικής Πολιτικής</li>
+                  <li>9/2022 – 1/2023: E&Y. Συμμετοχή στην εκπόνηση μελετών για τη βελτίωση του επιτελικού κράτους</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΑΚΑΔΗΜΑΪΚΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑ</h3>
+                
+                <h4>1/2008 – 2024: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΔΗΜΟΣΙΑΣ ΔΙΟΙΚΗΣΗΣ</h4>
+                <p>ΠΡΟΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ: Συνδιδασκαλία και αυτοδύναμη διδασκαλία μαθημάτων:</p>
+                <ul>
+                  <li>Εισαγωγή στο Ευρωπαϊκό Δίκαιο</li>
+                  <li>Ευρωπαϊκό Δίκαιο</li>
+                  <li>Ειδικά θέματα ευρωπαϊκής ολοκλήρωσης</li>
+                  <li>Ευρωπαϊκό Φορολογικό Δίκαιο</li>
+                </ul>
+
+                <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΘΝΙΚΗ ΚΑΙ ΕΝΩΣΙΑΚΗ ΔΙΟΙΚΗΣΗ: Αυτοδύναμη διδασκαλία μαθήματος: Εθνική και Ενωσιακή Διοίκηση</p>
+
+                <h4>2/2015 - 2018: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΚΟΙΝΩΝΙΟΛΟΓΙΑΣ</h4>
+                <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΥΡΩΠΑΪΚΗ ΚΟΙΝΩΝΙΚΗ ΠΟΛΙΤΙΚΗ</p>
+                <p>Συνδιδασκαλία μαθημάτων:</p>
+                <ul>
+                  <li>Ευρωπαϊκή Κοινωνική Πολιτική</li>
+                  <li>Κοινωνικό κράτος στην Ελλάδα</li>
+                  <li>Οικονομική κρίση και κοινωνικό κράτος στην Ελλάδα και την Ευρώπη: εξελίξεις, προβλήματα, προοπτικές</li>
+                </ul>
+
+                <h4>3/2022 – 2024: ΠΑΝΤΕΙΟ ΠΑΝΕΠΙΣΤΗΜΙΟ – ΤΜΗΜΑ ΔΙΕΘΝΩΝ, ΕΥΡΩΠΑΪΚΩΝ ΚΑΙ ΠΕΡΙΦΕΡΕΙΑΚΩΝ ΣΠΟΥΔΩΝ</h4>
+                <p>ΜΕΤΑΠΤΥΧΙΑΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – Η ΕΛΛΑΔΑ ΚΑΙ Ο ΚΟΣΜΟΣ</p>
+                <p>Θεματικές διδασκαλίας:</p>
+                <ul>
+                  <li>Πολιτική μετανάστευσης και ασύλου της ΕΕ</li>
+                  <li>Αντιτρομοκρατική πολιτική της ΕΕ</li>
+                </ul>
+
+                <h4>4/2022 – Σήμερα: ΕΛΛΗΝΙΚΟ ΑΝΟΙΚΤΟ ΠΑΝΕΠΙΣΤΗΜΙΟ</h4>
+                <p>ΣΧΟΛΗ ΚΟΙΝΩΝΙΚΩΝ ΕΠΙΣΤΗΜΩΝ - ΜΕΤΑΠΤΥΧΙΑΚΟ/ΕΙΔΙΚΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ – ΕΥΡΩΠΑΙΚΟ ΔΙΚΑΙΟ</p>
+                <p>Θεματική Ενότητα [ΕΔΙ62] Ε.Ε.: Χώρος Ελευθερίας - Ασφάλειας και Δικαιοσύνης</p>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΛΟΙΠΗ
+                ΔΙΔΑΣΚΑΛΙΑ /
+                ΕΠΙΜΟΡΦΩΣΕΙΣ</h3>
+                <h4>1. ΕΞΩΤΕΡΙΚΟΣ ΣΥΝΕΡΓΑΤΗΣ ΕΥΡΩΠΑΙΚΗΣ ΕΠΙΤΡΟΠΗΣ ΓΙΑ ΘΕΜΑΤΑ
+                ΕΥΡΩΜΕΣΟΓΕΙΑΚΗΣ ΣΥΝΕΡΓΑΣΙΑΣ</h4>
+                <p>Μαρόκο, 3/2004
+Εισηγήσεις σε φοιτητές νομικών σχολών Μαρόκου (Rabat, Tanger, Tetouan,
+Casablanca), σε ανώτατα κυβερνητικά στελέχη και σε σπουδαστές στην Εθνική
+Σχολή δημόσιας Διοίκησης Μαρόκου.</p>
+                <p>Θεματικές διδασκαλίας:</p>
+                <ul>
+                  <li>Ευρωμεσογειακή Συνεργασία</li>
+                  <li>Ευρωπαϊκή Πολιτική Γειτονίας</li>
+                </ul>
+                <h4>2. ΕΠΙΜΟΡΦΩΤΗΣ ΕΚΠΑΙΔΕΥΤΙΚΩΝ Β'ΒΑΘΜΙΑΣ ΣΕ ΘΕΜΑΤΑ ΕΥΡΩΠΑΙΚΗΣ ΕΝΩΣΗΣ</h4>
+                <p>9/2005 - 11/2006: «Ταχύρρυθμο Επιμορφωτικό Πρόγραμμα για την Ευρωπαϊκή Ένωση», Τμήμα Αξιολόγησης και Επιμόρφωσης Παιδαγωγικού Ινστιτούτου</p>
+                <p>Τόπος υλοποίησης: Περιφερειακά Επιμορφωτικά Κέντρα:</p>
+                <ul>
+                  <li>Πειραιά (10-11/3/2006)</li>
+                  <li>Γιαννιτσών (17-18/3/2006)</li>
+                  <li>Ηρακλείου (14-15/4/2006)</li>
+                  <li>Χαλκίδας (31/3-01/04/2006)</li>
+                  <li>Κοζάνης (3-4/11/2006)</li>
+                </ul>
+                <p>Θεματικές διδασκαλίας:</p>
+                <ul>
+                  <li>Ιστορία και αναγκαιότητα της ευρωπαϊκής</li>
+                  <li>Δομή και λειτουργία της Ευρωπαϊκής Ένωσης</li>
+                  <li>Αρμοδιότητες, πολιτικές της Ευρωπαϊκής Ένωσης</li>
+                </ul>
+
+                <h4>3. ΔΙΑΛΕΚΤΗΣ-ΚΑΘΗΓΗΤΗΣ ΣΧΟΛΗ ΕΘΝΙΚΗΣ ΑΣΦΑΛΕΙΑΣ</h4>
+                <p>ΑΣΤΥΝΟΜΙΚΗ ΑΚΑΔΗΜΙΑ, Θρακομακεδόνες, 2011-2012</p>
+                <p>Θεματικές διδασκαλίας:</p>
+                <ul>
+                  <li>Αίτια εισόδου, μεταναστευτικές εισροές και απόθεμα στην Ελλάδα την τελευταία εικοσαετία</li>
+                  <li>Δημογραφικές και οικονομικές επιδράσεις της μετανάστευσης στην Ελλάδα ως χώρα υποδοχής μεταναστών. Κοινοτική – ελληνική μεταναστευτική πολιτική</li>
+                </ul>
+
+                <h4>4. ΔΙΔΑΣΚΑΛΙΕΣ ΣΤΟ ΠΛΑΙΣΙΟ ΕΡΓΟΥ «ΑΚΑΔΗΜΙΑ ΠΛΑΤΩΝΟΣ – Η ΠΟΛΙΤΕΙΑ ΚΑΙ Ο ΠΟΛΙΤΗΣ»</h4>
+                <p>ΕΚΠΑ, 11/2012 – 07/2015</p>
+                <p>Θεματικές διδασκαλίας:</p>
+                <ul>
+                  <li>Ιδανική Πολιτεία. Ουτοπία;</li>
+                  <li>Από την πολίτη της πόλης-κράτους στον σύγχρονο πολίτη</li>
+                  <li>Η τέχνη (;) του κυβερνάν</li>
+                </ul>
+
+                <h4>5-7. ΕΙΣΗΓΗΣΕΙΣ ΣΕ ΕΠΙΜΟΡΦΩΣΕΙΣ ΔΙΚΑΣΤΙΚΩΝ ΛΕΙΤΟΥΡΓΩΝ</h4>
+                <ul>
+                  <li>Θεσσαλονίκη, ΕΣΔι, 19-20/1/2017: «Μεταναστευτικές και προσφυγικές ροές στην Ελλάδα»</li>
+                  <li>Θεσσαλονίκη, ΕΣΔι, 6/3/2017: «Πρόσφατη νομολογία ΔΕΕ σε θέματα διεθνούς προστασίας»</li>
+                  <li>Αθήνα, 27-28/11/2017: Παγκόσμιο Συνέδριο Διεθνούς Ένωσης Δικαστών για το Άσυλο</li>
+                </ul>
+
+                <h4>8. ΕΚΠΑΙΔΕΥΤΗΣ ΚΕΜΕΑ</h4>
+                <p>Δράση: «Ενίσχυση των Φορέων Επιβολής του Νόμου για την Αναγνώριση και την Καταπολέμηση της Ριζοσπαστικοποίησης και του Εξτρεμισμού»</p>
+                <p>Αθήνα, 4/2019 – 9/2019</p>
+                <p>Θεματικές εκπαίδευσης:</p>
+                <ul>
+                  <li>Η λειτουργία του Χώρου Ελευθερίας, Ασφάλειας και Δικαιοσύνης (ΧΕΑΔ) της ΕΕ</li>
+                  <li>Ορισμός τρομοκρατίας κατά το διεθνές και ενωσιακό δίκαιο</li>
+                  <li>Εξέλιξη του φαινομένου της τρομοκρατίας εντός των κρατών μελών της ΕΕ</li>
+                  <li>Πλαίσιο πρόληψης και καταπολέμησης της τρομοκρατίας σύμφωνα με ενωσιακό δίκαιο</li>
+                  <li>Αντιμετώπιση του φαινομένου αλλοδαπών τρομοκρατών μαχητών σύμφωνα με σχετικό εγχειρίδιο του FRONTEX</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΜΕΛΕΤΕΣ / ΕΡΕΥΝΑ</h3>
+                <ul>
+                  <li>European Migration Network (EMN), Τρίτη Εστιασμένη Μελέτη 2013, Αναγνώριση Θυμάτων Εμπορίας Ανθρώπων σε Διαδικασίες Διεθνούς Προστασίας (Άσυλο) και Αναγκαστικής Επιστροφής</li>
+                  <li>European Migration Network (EMN), Ελλάδα, Ετήσια Έκθεση Πολιτικής, 2012</li>
+                  <li>European Migration Network (EMN), Δεύτερη Εστιασμένη Μελέτη 2013, Η οργάνωση των δομών υποδοχής των αιτούντων άσυλο στα διάφορα κράτη μέλη</li>
+                  <li>«Μετα-ανάλυση των ερευνών που έχουν διαξαχθεί για τη μετανάστευση σε σημαντικά και σχετικά με την ένταξη πεδία, (Υγεία, Κοινωνική Ασφάλιση, Εργασία, Εκπαίδευση κ.λπ.), ΕΚΚΕ, 2013</li>
+                  <li>Μέλος ομάδας εργασίας εντός Υπουργείου Δικαιοσύνης για τη σύνταξη μελέτης για την προετοιμασία της χώρας σε περίπτωση μαζικής ροής υποθέσεων προσφυγικού δικαίου, 2016</li>
+                  <li>Σύνταξη εγχειριδίου στο πλαίσιο του προγράμματος «Ενίσχυση των Φορέων Επιβολής του Νόμου για την αναγνώριση και την καταπολέμηση της ριζοσπαστικοποίησης και του εξτρεμισμού», ΚΕΜΕΑ, 2018-2019</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΕΙΣΗΓΗΣΕΙΣ ΣΕ ΣΥΝΕΔΡΙΑ</h3>
+                <ul>
+                  <li>Ημερίδα Δημοκρίτειου Πανεπιστημίου Θράκης με θέμα: «Η εξωτερική πολιτική της ΕΕ», Κομοτηνή, 28/3/2002</li>
+                  
+                  <li>Ημερίδα Ένωσης Νέων Επιστημόνων Ευρωπαϊκών Σπουδών με θέμα: «Δυναμική της ευρωπαϊκής ολοκλήρωσης και συνταγματοποίηση». Τίτλος εισήγησης: «Η συμβολή της Κοινής Εξωτερικής Πολιτικής και Πολιτικής Ασφάλειας (ΚΕΠΠΑ) στην ευρωπαϊκή ολοκλήρωση και η Συνταγματική Συνθήκη», Αθήνα, 05/11/2003</li>
+                  
+                  <li>Ημερίδα πρεσβείας της Κύπρου με θέμα: «Η πρόκληση της Ευρώπης των Εικοσιπέντε. Η Κύπρος στην Ευρωπαϊκή Ένωση». Τίτλος εισήγησης: «Η διεύρυνση και οι σχέσεις της Ένωσης με τα νέα γειτονικά της κράτη», Αθήνα, 16/4/2004</li>
+                  
+                  <li>Ημερίδα Γραφείου του Ευρωπαϊκού Κοινοβουλίου στην Αθήνα με θέμα: «Η δυναμική του Ευρωπαϊκού Συντάγματος». Τίτλος εισήγησης: «Το θεσμικό πλαίσιο της ΚΕΠΠΑ στο Ευρωπαϊκό Σύνταγμα», Αθήνα, 28/2/2005</li>
+                  
+                  <li>Ημερίδα Κέντρου Διεθνούς και Ευρωπαϊκού Οικονομικού Δικαίου με θέμα: «Το Ευρωπαϊκό Σύνταγμα. Προκλήσεις και προοπτικές». Τίτλος εισήγησης: «Η ΚΕΠΠΑ στη Συνθήκη για το Ευρωπαϊκό Σύνταγμα», Θεσσαλονίκη, 11/4/2005</li>
+                  
+                  <li>Εκδήλωση Α.Ο. Αχαΐας «Γαλήνη» με θέμα: «Ευρωπαϊκό Σύνταγμα. Ένα Σύνταγμα για τον πολίτη;». Τίτλος εισήγησης: «Το Ευρωπαϊκό Σύνταγμα: ένας σταθμός ή το τέλος της ευρωπαϊκής ολοκλήρωσης;», Πάτρα, 12/5/2005</li>
+                  
+                  <li>Διεθνή διημερίδα του Daedalos Institute of Geopolitics, με θέμα "Peoples in Migration in the 21st century". Τίτλος εισήγησης: «The political and juridical perspectives on the integration of immigrants in Greece", Λευκωσία, 14-16/12/2006</li>
+                  
+                  <li>Ημερίδα της Αναπτυξιακής Σύμπραξης «Ξένιος Δίας» με θέμα: «Μέθοδοι προσέγγισης μεταναστών με στόχο την καταπολέμηση των διακρίσεων». Τίτλος εισήγησης: «Η κοινωνική ένταξη των μεταναστών σύμφωνα με τον Ν. 3386/2005», Αθήνα, 31/1/2007</li>
+                  
+                  <li>Διεθνές συνέδριο του Strategy International (SI) με θέμα: «NATO, UN, EU in the New Security Environment». Τίτλος εισήγησης: «Migration as a Security Issue in the European Union», Θεσσαλονίκη, 10/2/2011</li>
+                  
+                  <li>Εκδήλωση από το Σπίτι της Ευρώπης στη Ρόδο με θέμα: «Η μετανάστευση και το μέλλον της Ευρώπης». Τίτλος εισήγησης: «Η ευρωπαϊκή μεταναστευτική πολιτική. Η εφαρμογή της στην Ελλάδα», Ρόδος, 8/10/2014</li>
+                  
+                  <li>Ημερίδα της Ιεράς Μονής Πεντέλης με θέμα: «Ο διαθρησκευτικός διάλογος στην Ελλάδα και την Ευρώπη». Τίτλος εισήγησης: «Ο ρόλος της θρησκείας στη διαδικασία της ευρωπαϊκής ολοκλήρωσης», Αθήνα, 24.6/2015</li>
+                  
+                  <li>Ημερίδα του Ελληνικού Συμβουλίου για τους Πρόσφυγες με θέμα: «Μετά την αναγνώριση τι; Ζητήματα κοινωνικής ένταξης δικαιούχων διεθνούς προστασίας». Τίτλος εισήγησης: «Η τελευταίες εξελίξεις σε θέματα διεθνούς προστασίας σε Ελλάδα και Ευρώπη», Αθήνα, 10/5/2016</li>
+                  
+                  <li>Συνέδριο της Ένωσης Διοικητικών Δικαστών με θέμα: «Το νέο τοπίο της διοικητικής δικαιοσύνης στην εποχή της κρίσης - προοπτικές». Τίτλος εισήγησης: «Το παρόν και το μέλλον του Κοινού Ευρωπαϊκού Συστήματος Ασύλου», Θεσσαλονίκη, 02/06/2018</li>
+                  
+                  <li>5ο Πανελλήνιο Συνέδριο Ένωσης Δικαίου Αλλοδαπών και Μετανάστευσης με θέμα: «Πρόσφατες εξελίξεις στη θεωρία και νομολογία στο δίκαιο καταστάσεως αλλοδαπών». Τίτλος εισήγησης: «Πρόσφατη νομολογία ΔΕΕ στο μεταναστευτικό δίκαιο», Αθήνα, 30/3/2019</li>
+                  
+                  <li>Εκδήλωση του Ευρωπαϊκού Κέντρου Αριστείας Jean Monnet του ΕΚΠΑ με θέμα: «Το Ευρωπαϊκό Σύμφωνο για τη Μετανάστευση και το Άσυλο: Προκλήσεις και Προοπτικές». Τίτλος εισήγησης: «Η εξέλιξη του μεταναστευτικού δικαίου της ΕΕ εντός του Χώρου Ελευθερίας, Ασφάλειας και Δικαιοσύνης», Αθήνα, 06/04/2023</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΔΗΜΟΣΙΕΥΣΕΙΣ</h3>
+                
+                <h4>Α. ΜΟΝΟΓΡΑΦΙΕΣ</h4>
+                <ul>
+                  <li>La Grèce et la politique étrangère de l'Union européenne, Lille, ANRT, 2002</li>
+                  <li>Οι πολιτικές της ΕΕ: Εξωτερική, Γεωργική, Μεταναστευτική, Αθήνα, Σάκκουλας, 2016</li>
+                  <li>Η τρομοκρατία στον χώρο ελευθερίας, ασφάλειας και δικαιοσύνης της ΕΕ, Αθήνα, Νομική Βιβλιοθήκη, 2019</li>
+                </ul>
+
+                <h4>Β. ΣΥΜΜΕΤΟΧΗ ΣΕ ΣΥΛΛΟΓΙΚΑ ΕΡΓΑ</h4>
+                <ul>
+                  <li>«Η εξωτερική πολιτική της ΕΕ», στο συλλογικό έργο «Ευρωπαϊκή Ένωση: Δημιουργία, εξέλιξη, προοπτικές», Αθήνα, Νομική Βιβλιοθήκη, 2015</li>
+                  <li>«Το προσφυγικό δίκαιο στην ΕΕ», στο συλλογικό έργο «Δίκαιο των αλλοδαπών», Αθήνα, Νομική Βιβλιοθήκη, 2017</li>
+                </ul>
+
+                <h4>Γ. ΕΠΙΣΤΗΜΟΝΙΚΕΣ ΕΡΓΑΣΙΕΣ</h4>
+                <ul>
+                  <li>«Η προστασία των θεμελιωδών δικαιωμάτων στην ΕΕ», Νομικό Βήμα, 2014</li>
+                  <li>«Η αρχή της αλληλεγγύης στο προσφυγικό δίκαιο της ΕΕ», Εφημερίδα Διοικητικού Δικαίου, 2016</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h4>Δ. ΣΧΟΛΙΑΣΜΟΣ ΑΠΟΦΑΣΕΩΝ ΔΕΕ</h4>
+                <ul>
+                  <li>«Σχόλιο στην απόφαση C-638/16 PPU, X και X κατά Βελγίου», Εφημερίδα Διοικητικού Δικαίου, 2017</li>
+                  <li>«Σχόλιο στην απόφαση C-490/16, A.S. κατά Σλοβενίας», Εφημερίδα Διοικητικού Δικαίου, 2018</li>
+                  <li>«Σχόλιο στην απόφαση C-713/17, Ayubi κατά Αυστρίας», Εφημερίδα Διοικητικού Δικαίου, 2019</li>
+                </ul>
+
+                <h4>Ε. ΕΠΙΣΚΟΠΗΣΗ ΝΟΜΟΛΟΓΙΑΣ ΔΕΕ</h4>
+                <ul>
+                  <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2015-2016)», Εφημερίδα Διοικητικού Δικαίου, 2017</li>
+                  <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2017)», Εφημερίδα Διοικητικού Δικαίου, 2018</li>
+                  <li>«Επισκόπηση νομολογίας ΔΕΕ σε θέματα μετανάστευσης και ασύλου (2018)», Εφημερίδα Διοικητικού Δικαίου, 2019</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΠΙΣΤΟΠΟΙΗΣΕΙΣ</h3>
+                <ul>
+                  <li>Πιστοποιημένος εκπαιδευτής εκπαιδευτών, Ινστιτούτο Επιμόρφωσης του ΕΚΔΔΑ, 03/2012 - 4/2012</li>
+                  <li>Πιστοποιημένος σε θέματα Ασύλου και στην ΕΣΔΑ, European Programme for Human Rights Education for Legal Professionals (HELP), 2017</li>
+                  <li>Πιστοποιημένoς σε θέματα Ασύλου, European Asylum Support Office (EASO), 2014</li>
+                  <li>Πιστοποιημένος σε θέματα εξέτασης αιτημάτων ασύλου, European Asylum Support Office (EASO), 2013</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΣΥΜΜΕΤΟΧΗ ΣΕ ΕΠΙΣΤΗΜΟΝΙΚΕΣ ΕΤΑΙΡΕΙΕΣ</h3>
+                <ul>
+                  <li>Μέλος της Ελληνικής Εταιρείας Διεθνούς Δικαίου και Διεθνών Σχέσεων</li>
+                  <li>Μέλος της Ένωσης Ευρωπαίων Διοικητικών Δικαστών</li>
+                  <li>Μέλος της Ένωσης Δικαίου Αλλοδαπών και Μετανάστευσης</li>
+                  <li>Μέλος της Ελληνικής Ένωσης για τα Δικαιώματα του Ανθρώπου</li>
+                  <li>Μέλος της Ελληνικής Ένωσης Ευρωπαϊκού Δικαίου</li>
+                </ul>
+              </div>
+
+              <div className="biography-modal-section">
+                <h3>ΞΕΝΕΣ ΓΛΩΣΣΕΣ</h3>
+                <ul>
+                  <li>ΓΑΛΛΙΚΑ: Άριστα</li>
+                  <li>ΑΓΓΛΙΚΑ: Πολύ καλά</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+          @media screen and (max-width: 768px) {
+            .App-header {
+              padding: 1rem;
+            }
+
+            .navbar {
+              flex-direction: column;
+              align-items: center;
+            }
+
+            .nav-links {
+              flex-direction: column;
+              align-items: center;
+              gap: 1rem;
+              margin-top: 1rem;
+            }
+
+            .nav-links a {
+              display: block;
+              padding: 0.5rem;
+              width: 100%;
+              text-align: center;
+            }
+
+            .hero-section {
+              padding: 2rem 1rem;
+            }
+
+            .hero-buttons {
+              flex-direction: column;
+              gap: 1rem;
+            }
+
+            .cta-button {
+              width: 100%;
+              margin: 0;
+            }
+
+            .service-card {
+              padding: 1rem;
+            }
+
+            .service-modal {
+              width: 90% !important;
+              margin: 1rem !important;
+              padding: 1rem !important;
+              max-height: 90vh !important;
+            }
+
+            .service-modal-content {
+              padding: 1rem;
+            }
+
+            .appointment-form {
+              padding: 1rem;
+            }
+
+            .form-group {
+              margin-bottom: 1rem;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+              width: 100%;
+              padding: 0.5rem;
+            }
+
+            .map-section {
+              height: 300px;
+            }
+
+            .contact-info {
+              text-align: center;
+            }
+          }
+        `}
+      </style>
 
       <footer className="footer">
         <p>© 2024 ΠΑΠΑΚΩΝΣΤΑΝΤΗΣ- Όλα τα δικαιώματα κατοχυρωμένα</p>
